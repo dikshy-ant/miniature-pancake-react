@@ -14,24 +14,25 @@ const App = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
  useEffect(() => {
   const unsubscribe = onAuthStateChanged(auth, async (user) => {
+    console.log("Auth state changed:", user ? "User logged in" : "No user");
     if(user) {
-      console.log("User is logged in:", user);
       setIsAuthenticated(true);
       // Only redirect to home if we're on the login page
       if (location.pathname === '/login') {
         navigate('/');
       }
     } else {
-      console.log("No user is logged in");
       setIsAuthenticated(false);
       // Only redirect to login if we're not already on login page and not on player page
       if (location.pathname !== '/login' && !location.pathname.startsWith('/player/')) {
         navigate('/login');
       }
     }
+    setIsLoading(false);
   });
 
   return () => unsubscribe();
@@ -40,11 +41,24 @@ const App = () => {
   return (
     <div>
       <ToastContainer theme='dark' />
-      <Routes>
-        <Route path='/' element = {isAuthenticated ? <Home /> : <Login />} />
-        <Route path='/login' element = {<Login />} />
-        <Route path='/player/:id' element = {isAuthenticated ? <Player /> : <Login />} />
-      </Routes>
+      {isLoading ? (
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center', 
+          height: '100vh',
+          color: 'white',
+          backgroundColor: '#000'
+        }}>
+          Loading...
+        </div>
+      ) : (
+        <Routes>
+          <Route path='/' element = {isAuthenticated ? <Home /> : <Login />} />
+          <Route path='/login' element = {<Login />} />
+          <Route path='/player/:id' element = {isAuthenticated ? <Player /> : <Login />} />
+        </Routes>
+      )}
       
     </div>
   )

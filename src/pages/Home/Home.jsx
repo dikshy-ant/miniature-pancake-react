@@ -12,9 +12,7 @@ import Footer from '../../components/Footer/Footer'
 
 
 const Home = () => {
-
-
-  const userName = getUserName(); 
+  console.log("Home component rendering");
   return (
     <div className='home'>
       <Navbar/>
